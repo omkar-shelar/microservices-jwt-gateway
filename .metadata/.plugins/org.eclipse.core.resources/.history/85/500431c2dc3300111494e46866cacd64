@@ -1,0 +1,30 @@
+package com.example.demo.restController;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
+@RestController
+public class OrderController {
+	
+	@Value("${user.service.url}")
+	private String baseUrl;
+
+    @GetMapping("/orders")
+    public Map<String, Object> getOrders() {
+        
+        RestTemplate restTemplate = new RestTemplate();
+        
+        Object users = restTemplate.getForObject(
+        		baseUrl, Object.class
+        );
+
+        return Map.of(
+            "orderId", 101,
+            "user", users
+        );
+    }
+}
