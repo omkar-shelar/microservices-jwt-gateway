@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Rename resource &apos;Gateway&apos; to &apos;API-Gateway&apos;" description="Rename resource &apos;Gateway&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Gateway" name="API-Gateway" stamp="1776062027843" updateReferences="true"/>&#x0A;<refactoring comment="Delete resource &apos;config-server&apos;" deleteContents="false" description="Delete resource &apos;config-server&apos;" element1="/config-server" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1776145581993"/>
-</session>
