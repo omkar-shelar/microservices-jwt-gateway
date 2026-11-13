@@ -17,8 +17,9 @@ public class SecurityConfig {
 	            .authorizeExchange(exchange -> exchange
 	                    .pathMatchers("/auth/**").permitAll()
 
-	                    // 🔥 IMPORTANT FIX
-	                    .anyExchange().permitAll()
+                    // JWT authorization is enforced by JwtFilter for these gateway routes.
+                    .pathMatchers("/users/**", "/orders/**", "/secure/**").permitAll()
+                    .anyExchange().denyAll()
 	            )
 	            .build();
 	}

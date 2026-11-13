@@ -5,11 +5,15 @@ spring:
   application:
     name: API-GATEWAY
 
+jwt:
+  secret: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:3600000}
+
   # 🔥 ADD THIS (Redis config)
   data:
     redis:
-      host: localhost
-      port: 6379
+        host: ${REDIS_HOST:localhost}
+        port: ${REDIS_PORT:6379}
 
   cloud:
     gateway:
@@ -75,4 +79,4 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:8761/eureka
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka}
