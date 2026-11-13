@@ -1,20 +1,16 @@
-# 🏗️ Architecture Overview
+# Architecture overview
 
-## System Design
+The project contains six Spring Boot applications plus Redis and a checked-out configuration repository. The visual topology is in [architecture.mmd](architecture.mmd).
 
-Client → API Gateway → Microservices → Database/Redis
+## Request flow
 
-## Components
+Clients are expected to call the API Gateway on port `8080`. The Gateway permits `/auth/**`, validates JWTs for `/users/**`, `/orders/**`, and `/secure/**`, then forwards requests through Eureka service names. Order Service calls User Service with OpenFeign.
 
-- API Gateway (Routing + JWT + Rate Limiting)
-- Auth Service (Authentication & Token generation)
-- User Service (User management)
-- Order Service (Order processing)
-- Eureka Server (Service discovery)
-- Config Server (Centralized configuration)
-- Redis (Caching + Rate limiting)
+## Infrastructure flow
 
-## Communication
+- Eureka Server listens on `8761`.
+- Config Server listens on `8888` and uses the local `config-repo` with the native profile by default.
+- Redis listens on `6379` for the configured rate-limit/cache integrations.
+- User Service uses an in-memory H2 database.
 
-- REST APIs
-- Load balanced using Eureka
+The architecture is suitable for learning. It does not provide production service isolation: direct service ports are exposed in Compose and downstream services do not independently validate JWTs.
