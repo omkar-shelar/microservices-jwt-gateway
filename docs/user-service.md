@@ -1,14 +1,21 @@
-# 👤 User Service
+# User Service
 
-## Responsibilities
+## Responsibility
 
-- Manage user data
+User Service demonstrates a JPA/H2 user lookup and a Redis-cache configuration.
 
-## Features
+## Endpoints
 
-- Redis caching
-- H2 database
+- `GET /users/getAll` returns a fixed list containing Alice.
+- `GET /users/{id}` queries the JPA repository through `UserService`.
 
-## Endpoint
+Through the Gateway, both paths require a valid JWT. Direct access to port `8091` can bypass Gateway validation.
 
-GET /users/getAll
+## Persistence and cache
+
+- Entity: `User` with `id` and `name`.
+- Repository: Spring Data `JpaRepository<User, Long>`.
+- Database: in-memory H2 configured by Config Server.
+- Cache: Redis cache manager and `@Cacheable` on ID lookup.
+
+There are no HTTP create/update/delete endpoints. H2 data is lost when the process restarts.

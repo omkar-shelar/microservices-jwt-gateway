@@ -1,0 +1,79 @@
+{
+  "info": {
+    "name": "Microservices JWT Gateway",
+    "description": "Source-derived requests for the Microservices JWT Gateway demonstration. Runtime behavior is not claimed as verified.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "gatewayUrl", "value": "http://localhost:8080" },
+    { "key": "username", "value": "replace-me" },
+    { "key": "password", "value": "replace-me" },
+    { "key": "token", "value": "paste-jwt-here" }
+  ],
+  "item": [
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "{{gatewayUrl}}/auth/login?username={{username}}&password={{password}}",
+          "host": ["{{gatewayUrl}}"],
+          "path": ["auth", "login"],
+          "query": [
+            { "key": "username", "value": "{{username}}" },
+            { "key": "password", "value": "{{password}}" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get all users",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{gatewayUrl}}/users/getAll", "host": ["{{gatewayUrl}}"], "path": ["users", "getAll"] }
+      }
+    },
+    {
+      "name": "Get user by id",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{gatewayUrl}}/users/1", "host": ["{{gatewayUrl}}"], "path": ["users", "1"] }
+      }
+    },
+    {
+      "name": "Get orders",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{gatewayUrl}}/orders", "host": ["{{gatewayUrl}}"], "path": ["orders"] }
+      }
+    },
+    {
+      "name": "Secure demo endpoint",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+        "url": { "raw": "{{gatewayUrl}}/secure", "host": ["{{gatewayUrl}}"], "path": ["secure"] }
+      }
+    },
+    {
+      "name": "Protected endpoint without token",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{gatewayUrl}}/users/getAll", "host": ["{{gatewayUrl}}"], "path": ["users", "getAll"] }
+      }
+    },
+    {
+      "name": "Unknown Gateway route",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": { "raw": "{{gatewayUrl}}/unknown", "host": ["{{gatewayUrl}}"], "path": ["unknown"] }
+      }
+    }
+  ]
+}

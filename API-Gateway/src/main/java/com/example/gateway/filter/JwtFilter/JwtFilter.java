@@ -22,9 +22,13 @@ public class JwtFilter implements GlobalFilter {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        // ✅ Allow Auth APIs without token
-        if (path.startsWith("/auth")) {
+        if (isPublicPath(path)) {
             return chain.filter(exchange);
+        }
+
+        if (!isProtectedPath(path)) {
+            exchange.getResponse().setStatusCode(HttpStatus.NOT_FOUND);
+            return exchange.getResponse().setComplete();
         }
 
         String authHeader = exchange.getRequest()
@@ -41,8 +45,6 @@ public class JwtFilter implements GlobalFilter {
 
         // ❌ Invalid token
         if (!jwtUtil.validateToken(token)) {
-        	System.out.println("TOKEN: " + token);
-        	System.out.println("VALID: " + jwtUtil.validateToken(token));
             exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
             return exchange.getResponse().setComplete();
         }
@@ -56,5 +58,15 @@ public class JwtFilter implements GlobalFilter {
 
         // ✅ Continue request
         return chain.filter(exchange);
+    }
+
+    private boolean isPublicPath(String path) {
+        return path.equals("/auth") || path.startsWith("/auth/");
+    }
+
+    private boolean isProtectedPath(String path) {
+        return path.equals("/users") || path.startsWith("/users/")
+                || path.equals("/orders") || path.startsWith("/orders/")
+                || path.equals("/secure") || path.startsWith("/secure/");
     }
 }

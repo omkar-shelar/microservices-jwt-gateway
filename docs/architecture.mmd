@@ -1,0 +1,30 @@
+flowchart LR
+    Client[Client]
+    Gateway[API Gateway :8080\nJWT filter\nGateway routes]
+    Auth[Auth Service :8083\nJWT generation]
+    User[User Service :8091\nJPA/H2\nRedis cache]
+    Order[Order Service :8092\nOpenFeign]
+    Eureka[Eureka Server :8761]
+    Config[Config Server :8888]
+    ConfigRepo[(config-repo)]
+    Redis[(Redis :6379)]
+    H2[(H2 in-memory database)]
+
+    Client --> Gateway
+    Gateway -->|/auth/**| Auth
+    Gateway -->|/users/**| User
+    Gateway -->|/orders/**| Order
+    Gateway -->|/secure/**| Auth
+    Order -->|GET /users/getAll| User
+    User --> H2
+    Gateway -. configured rate limiting .-> Redis
+    User -. configured cache .-> Redis
+    Auth -. registers .-> Eureka
+    User -. registers .-> Eureka
+    Order -. registers .-> Eureka
+    Gateway -. registers .-> Eureka
+    Config --> ConfigRepo
+    Gateway -. config import .-> Config
+    Auth -. config import .-> Config
+    User -. config import .-> Config
+    Order -. config import .-> Config
