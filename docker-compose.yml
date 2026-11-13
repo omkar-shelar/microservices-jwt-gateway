@@ -6,46 +6,79 @@ services:
       - "6379:6379"
 
   eureka-server:
-    build: ./Eureka-Server
+    build:
+      context: ./Eureka-Server
     ports:
       - "8761:8761"
 
   config-server:
-    build: ./config-server
+    build:
+      context: .
+      dockerfile: config-server/Dockerfile
     ports:
       - "8888:8888"
+    environment:
+      CONFIG_SERVER_PROFILE: native
+      CONFIG_REPO_PATH: file:/config-repo
     depends_on:
       - eureka-server
 
   api-gateway:
-    build: ./API-Gateway
+    build:
+      context: ./API-Gateway
     ports:
       - "8080:8080"
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
     depends_on:
       - eureka-server
       - config-server
       - redis
 
   auth-service:
-    build: ./auth-service
+    build:
+      context: ./auth-service
     ports:
-      - "8081:8081"
+      - "8083:8083"
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET must be set}
+      JWT_EXPIRATION: ${JWT_EXPIRATION:-3600000}
+      AUTH_ADMIN_USERNAME: ${AUTH_ADMIN_USERNAME:?AUTH_ADMIN_USERNAME must be set}
+      AUTH_ADMIN_PASSWORD: ${AUTH_ADMIN_PASSWORD:?AUTH_ADMIN_PASSWORD must be set}
     depends_on:
       - eureka-server
       - config-server
 
   order-service:
-    build: ./order-service
+    build:
+      context: ./order-service
     ports:
-      - "8082:8082"
+      - "8092:8092"
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
     depends_on:
       - eureka-server
       - config-server
 
   user-service:
-    build: ./user-service
+    build:
+      context: ./user-service
     ports:
-      - "8083:8083"
+      - "8091:8091"
+    environment:
+      CONFIG_SERVER_URL: http://config-server:8888
+      EUREKA_SERVER_URL: http://eureka-server:8761/eureka
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
     depends_on:
       - eureka-server
       - config-server
+      - redis
